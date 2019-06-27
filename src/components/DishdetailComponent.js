@@ -5,6 +5,7 @@ import {
 } from 'reactstrap';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Link } from 'react-router-dom';
+import { Loading } from './LoadingComponent';
 
 function RenderDish({ dish }) {
 
@@ -39,7 +40,7 @@ function RenderComments({ comments, addComment, dishId }) {
             <div>
                 <h4>Comments</h4>
                 <ul className="list-unstyled">{cmts}</ul>
-                <CommentForm dishId={dishId} addComment={addComment}/>
+                <CommentForm dishId={dishId} addComment={addComment} />
             </div>
 
         );
@@ -50,35 +51,55 @@ function RenderComments({ comments, addComment, dishId }) {
         );
 }
 const DishDetail = (props) => {
-
-
-    return (
-        <div className="container">
-            <div className="row">
-                <Breadcrumb>
-
-                    <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
-                    <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
-                </Breadcrumb>
-                <div className="col-12">
-                    <h3>{props.dish.name}</h3>
-                    <hr />
+    if (props.isLoading) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <Loading />
                 </div>
             </div>
-            <div className="row">
-                <div className="col-12 col-md-5 m-1">
-                    <RenderDish dish={props.dish} />
-                </div>
-                <div className="col-12 col-md-5 m-1">
-                    <RenderComments comments={props.comments} 
-                    addComment={props.addComment}
-                    dishId={props.dish.id} />
+        );
+    }
+    else if (props.errMess) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <h4>{props.errMess}</h4>
                 </div>
             </div>
-        </div>
+        );
+    }
+    else if (props.dish != null) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <Breadcrumb>
+
+                        <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
+                        <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
+                    </Breadcrumb>
+                    <div className="col-12">
+                        <h3>{props.dish.name}</h3>
+                        <hr />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12 col-md-5 m-1">
+                        <RenderDish dish={props.dish} />
+                    </div>
+                    <div className="col-12 col-md-5 m-1">
+                        <RenderComments comments={props.comments}
+                            addComment={props.addComment}
+                            dishId={props.dish.id} />
+                    </div>
+                </div>
+            </div>
 
 
-    );
+        );
+    }
+
+
 
 }
 
@@ -130,21 +151,21 @@ class CommentForm extends Component {
                                 <Col md={12}>
                                     <Control.text model=".author" id="author" name="author"
                                         placeholder="Your name"
-                                        className="form-control" 
+                                        className="form-control"
                                         validators={{
-                                            minLength : minLength(3),
-                                            maxLength : maxLength(15)
+                                            minLength: minLength(3),
+                                            maxLength: maxLength(15)
                                         }} />
-                                    <Errors 
+                                    <Errors
                                         className="text-danger"
                                         show="touched"
                                         model=".author"
-                                        messages = {{
+                                        messages={{
                                             minLength: 'Must be greater than to 2 characters',
                                             maxLength: 'Must be 15 characters or less'
                                         }}
                                     />
-                                        
+
                                 </Col>
                             </Row>
                             <Row className="form-group">
